@@ -117,7 +117,7 @@ document.getElementById("progressBar")
 }
 
 document
-.getElementById("searchInput")
+.getElementById("search")
 .addEventListener("input", renderTasks);
 
 renderTasks();
