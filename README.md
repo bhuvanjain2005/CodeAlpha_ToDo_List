@@ -18,4 +18,8 @@ A responsive To-Do List web application built using HTML, CSS, and JavaScript.
 Bhuvan V Jain
 
 ## Internship
+<<<<<<< HEAD
 CodeAlpha Web Development Internship
+=======
+CodeAlpha Web Development Internship
+>>>>>>> 80119ae0942875492520e892a6a5d2b583869eb4
