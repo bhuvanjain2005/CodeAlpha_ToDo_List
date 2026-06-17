@@ -241,3 +241,25 @@ gap:10px;
     color:#94a3b8;
     font-size:18px;
 }
+.task-card{
+    background: linear-gradient(
+        135deg,
+        #1e293b,
+        #243447
+    );
+}
+
+.card{
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+h1{
+    font-size:3rem;
+}
+
+.task-left h3{
+    font-size:20
