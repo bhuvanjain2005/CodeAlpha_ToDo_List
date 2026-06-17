@@ -171,17 +171,29 @@ gap:10px;
 }
 
 .priority-high{
-    color:#ef4444;
+    background:#ef4444;
+    color:white;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
     font-weight:bold;
 }
 
 .priority-medium{
-    color:#f59e0b;
+    background:#f59e0b;
+    color:white;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
     font-weight:bold;
 }
 
 .priority-low{
-    color:#22c55e;
+    background:#22c55e;
+    color:white;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
     font-weight:bold;
 }
 
