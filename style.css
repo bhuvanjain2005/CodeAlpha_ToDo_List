@@ -137,16 +137,22 @@ gap:10px;
 
 .task-card{
     background:#1e293b;
-    border-left:5px solid #8b5cf6;
     padding:20px;
+    margin-top:15px;
     border-radius:15px;
-    margin-bottom:15px;
 
     display:flex;
     justify-content:space-between;
     align-items:center;
 
-    transition:0.3s ease;
+    border-left:6px solid #8b5cf6;
+
+    transition:all 0.3s ease;
+}
+
+.task-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 .task-card:hover{
