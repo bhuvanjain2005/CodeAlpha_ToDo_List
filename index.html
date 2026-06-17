@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaskFlow Dashboard</title>
+<title>Student Productivity Dashboard</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
 
-    <h1>🚀 TaskFlow Dashboard</h1>
+    <h1>🚀 Student Productivity Dashboard</h1>
 
     <div class="stats">
         <div class="card">
@@ -33,9 +33,9 @@
         <input type="text" id="taskInput" placeholder="Enter Task">
 
         <select id="priority">
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
+            <option value="High">🔴 High</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
         </select>
 
         <input type="date" id="dueDate">
@@ -43,9 +43,9 @@
         <button onclick="addTask()">Add Task</button>
     </div>
 
-    <input type="text" id="search" placeholder="🔍 Search Tasks">
+    <input type="text" id="searchInput" placeholder="🔍 Search Tasks">
 
-    <div class="progress">
+    <div class="progress-container">
         <div id="progressBar"></div>
     </div>
 
