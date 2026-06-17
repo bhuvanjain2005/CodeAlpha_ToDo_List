@@ -1,123 +1,143 @@
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-function saveTasks(){
-localStorage.setItem("tasks", JSON.stringify(tasks));
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function addTask(){
+function addTask() {
 
-const taskInput = document.getElementById("taskInput");
-const priority = document.getElementById("priority");
-const dueDate = document.getElementById("dueDate");
+    const taskInput = document.getElementById("taskInput");
+    const priority = document.getElementById("priority");
+    const dueDate = document.getElementById("dueDate");
 
-if(taskInput.value.trim()===""){
-alert("Enter a task");
-return;
+    if (taskInput.value.trim() === "") {
+        alert("Please enter a task!");
+        return;
+    }
+
+    tasks.push({
+        text: taskInput.value,
+        priority: priority.value,
+        dueDate: dueDate.value,
+        completed: false
+    });
+
+    taskInput.value = "";
+    dueDate.value = "";
+
+    saveTasks();
+    renderTasks();
 }
 
-tasks.push({
-text: taskInput.value,
-priority: priority.value,
-dueDate: dueDate.value,
-completed:false
-});
+function renderTasks() {
 
-taskInput.value="";
-dueDate.value="";
+    const taskList = document.getElementById("taskList");
 
-saveTasks();
-renderTasks();
+    // FIXED SEARCH INPUT
+    const searchBox = document.getElementById("searchInput");
+
+    const search = searchBox
+        ? searchBox.value.toLowerCase()
+        : "";
+
+    taskList.innerHTML = "";
+
+    tasks
+        .filter(task =>
+            task.text.toLowerCase().includes(search)
+        )
+        .forEach((task, index) => {
+
+            const div = document.createElement("div");
+
+            div.className = `task ${task.completed ? "completed" : ""}`;
+
+            div.innerHTML = `
+            <div class="task-info">
+                <h3>${task.text}</h3>
+
+                <small>
+                    Priority: ${task.priority}
+                    |
+                    Due: ${task.dueDate || "Not Set"}
+                </small>
+            </div>
+
+            <div class="actions">
+                <button onclick="toggleTask(${index})">✓</button>
+                <button onclick="editTask(${index})">✏</button>
+                <button onclick="deleteTask(${index})">🗑</button>
+            </div>
+            `;
+
+            taskList.appendChild(div);
+        });
+
+    updateStats();
 }
 
-function renderTasks(){
+function toggleTask(index) {
+    tasks[index].completed = !tasks[index].completed;
 
-const taskList=document.getElementById("taskList");
-const search=document.getElementById("searchInput").value.toLowerCase();
-
-taskList.innerHTML="";
-
-tasks
-.filter(task=>task.text.toLowerCase().includes(search))
-.forEach((task,index)=>{
-
-const div=document.createElement("div");
-
-div.className=`task ${task.completed ? "completed" : ""}`;
-
-div.innerHTML=`
-<div class="task-info">
-<h3>${task.text}</h3>
-<small>
-Priority: ${task.priority} |
-Due: ${task.dueDate || "Not Set"}
-</small>
-</div>
-
-<div class="actions">
-<button onclick="toggleTask(${index})">✓</button>
-<button onclick="editTask(${index})">✏</button>
-<button onclick="deleteTask(${index})">🗑</button>
-</div>
-`;
-
-taskList.appendChild(div);
-
-});
-
-updateStats();
+    saveTasks();
+    renderTasks();
 }
 
-function toggleTask(index){
-tasks[index].completed=!tasks[index].completed;
-saveTasks();
-renderTasks();
+function editTask(index) {
+
+    const updated = prompt(
+        "Edit Task",
+        tasks[index].text
+    );
+
+    if (updated && updated.trim() !== "") {
+
+        tasks[index].text = updated;
+
+        saveTasks();
+        renderTasks();
+    }
 }
 
-function editTask(index){
+function deleteTask(index) {
 
-const updated=prompt(
-"Edit Task",
-tasks[index].text
-);
+    if (confirm("Delete task?")) {
 
-if(updated){
-tasks[index].text=updated;
-saveTasks();
-renderTasks();
-}
+        tasks.splice(index, 1);
+
+        saveTasks();
+        renderTasks();
+    }
 }
 
-function deleteTask(index){
+function updateStats() {
 
-if(confirm("Delete task?")){
-tasks.splice(index,1);
-saveTasks();
-renderTasks();
-}
-}
+    const total = tasks.length;
 
-function updateStats(){
+    const completed =
+        tasks.filter(task => task.completed).length;
 
-const total=tasks.length;
+    const pending = total - completed;
 
-const completed=
-tasks.filter(t=>t.completed).length;
+    document.getElementById("totalTasks").textContent = total;
+    document.getElementById("completedTasks").textContent = completed;
+    document.getElementById("pendingTasks").textContent = pending;
 
-const pending=total-completed;
+    const progress =
+        total === 0
+            ? 0
+            : (completed / total) * 100;
 
-document.getElementById("totalTasks").textContent=total;
-document.getElementById("completedTasks").textContent=completed;
-document.getElementById("pendingTasks").textContent=pending;
-
-const progress=
-total===0 ? 0 : (completed/total)*100;
-
-document.getElementById("progressBar")
-.style.width=progress+"%";
+    document.getElementById("progressBar")
+        .style.width = progress + "%";
 }
 
-document
-.getElementById("search")
-.addEventListener("input", renderTasks);
+/* FIXED SEARCH LISTENER */
+
+const searchInput = document.getElementById("searchInput");
+
+if (searchInput) {
+    searchInput.addEventListener("input", renderTasks);
+}
 
 renderTasks();
