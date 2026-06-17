@@ -33,7 +33,6 @@ function renderTasks() {
 
     const taskList = document.getElementById("taskList");
 
-    // FIXED SEARCH INPUT
     const searchBox = document.getElementById("searchInput");
 
     const search = searchBox
@@ -50,23 +49,28 @@ function renderTasks() {
 
             const div = document.createElement("div");
 
-            div.className = `task ${task.completed ? "completed" : ""}`;
-
             div.innerHTML = `
-            <div class="task-info">
-                <h3>${task.text}</h3>
+            <div class="task-card">
 
-                <small>
-                    Priority: ${task.priority}
-                    |
-                    Due: ${task.dueDate || "Not Set"}
-                </small>
-            </div>
+                <div class="task-left">
+                    <h3>${task.completed ? "✅" : "📌"} ${task.text}</h3>
 
-            <div class="actions">
-                <button onclick="toggleTask(${index})">✓</button>
-                <button onclick="editTask(${index})">✏</button>
-                <button onclick="deleteTask(${index})">🗑</button>
+                    <p class="meta">
+                        Priority:
+                        <span class="priority-${task.priority.toLowerCase()}">
+                            ${task.priority}
+                        </span>
+                        |
+                        Due: ${task.dueDate || "Not Set"}
+                    </p>
+                </div>
+
+                <div class="actions">
+                    <button onclick="toggleTask(${index})">✓</button>
+                    <button onclick="editTask(${index})">✏</button>
+                    <button onclick="deleteTask(${index})">🗑</button>
+                </div>
+
             </div>
             `;
 
