@@ -99,6 +99,14 @@ justify-content:space-between;
 align-items:center;
 }
 
+.completed-task h3{
+    text-decoration:line-through;
+    opacity:0.6;
+}
+
+.completed-task .meta{
+    opacity:0.5;
+}
 .task.completed{
 opacity:.6;
 text-decoration:line-through;
