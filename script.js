@@ -1,49 +1,91 @@
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
+let currentFilter = "all";
+
 function saveTasks(){
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function renderTasks(){
-    const taskList = document.getElementById("taskList");
-    taskList.innerHTML = "";
-
-    tasks.forEach((task,index)=>{
-        const li = document.createElement("li");
-
-        li.innerHTML = `
-            <span class="${task.completed ? 'completed' : ''}">
-                ${task.text}
-            </span>
-
-            <div class="actions">
-                <button onclick="toggleTask(${index})">✔</button>
-                <button onclick="editTask(${index})">✏</button>
-                <button onclick="deleteTask(${index})">🗑</button>
-            </div>
-        `;
-
-        taskList.appendChild(li);
-    });
-}
-
 function addTask(){
-    const input = document.getElementById("taskInput");
 
-    if(input.value.trim() === ""){
-        alert("Please enter a task");
+    const taskInput = document.getElementById("taskInput");
+    const priority = document.getElementById("priority");
+    const dueDate = document.getElementById("dueDate");
+
+    if(taskInput.value.trim() === ""){
+        alert("Enter a task");
         return;
     }
 
     tasks.push({
-        text: input.value,
-        completed:false
+        text: taskInput.value,
+        completed:false,
+        priority:priority.value,
+        dueDate:dueDate.value
     });
 
-    input.value = "";
+    taskInput.value="";
+    dueDate.value="";
 
     saveTasks();
     renderTasks();
+}
+
+function renderTasks(){
+
+    const taskList = document.getElementById("taskList");
+
+    const search =
+    document.getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+    taskList.innerHTML="";
+
+    let filteredTasks = tasks.filter(task => {
+
+        let matchesSearch =
+        task.text.toLowerCase().includes(search);
+
+        let matchesFilter =
+        currentFilter==="all" ||
+        (currentFilter==="completed" && task.completed) ||
+        (currentFilter==="pending" && !task.completed);
+
+        return matchesSearch && matchesFilter;
+    });
+
+    filteredTasks.forEach((task,index)=>{
+
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+        <div class="task-info">
+            <div class="${task.completed ? 'completed' : ''}">
+                ${task.text}
+            </div>
+
+            <small>
+                Priority:
+                <span class="priority-${task.priority.toLowerCase()}">
+                    ${task.priority}
+                </span>
+                |
+                Due: ${task.dueDate || 'Not Set'}
+            </small>
+        </div>
+
+        <div class="actions">
+            <button onclick="toggleTask(${tasks.indexOf(task)})">✔</button>
+            <button onclick="editTask(${tasks.indexOf(task)})">✏</button>
+            <button onclick="deleteTask(${tasks.indexOf(task)})">🗑</button>
+        </div>
+        `;
+
+        taskList.appendChild(li);
+    });
+
+    updateStats();
 }
 
 function toggleTask(index){
@@ -53,9 +95,11 @@ function toggleTask(index){
 }
 
 function editTask(index){
-    const newTask = prompt("Edit Task", tasks[index].text);
 
-    if(newTask !== null && newTask.trim() !== ""){
+    let newTask =
+    prompt("Edit Task", tasks[index].text);
+
+    if(newTask && newTask.trim() !== ""){
         tasks[index].text = newTask;
         saveTasks();
         renderTasks();
@@ -63,9 +107,38 @@ function editTask(index){
 }
 
 function deleteTask(index){
-    tasks.splice(index,1);
-    saveTasks();
+
+    if(confirm("Delete task?")){
+        tasks.splice(index,1);
+        saveTasks();
+        renderTasks();
+    }
+}
+
+function filterTasks(type){
+    currentFilter = type;
     renderTasks();
 }
+
+function updateStats(){
+
+    document.getElementById("taskCount")
+    .innerText = `${tasks.length} Tasks`;
+
+    let completed =
+    tasks.filter(task => task.completed).length;
+
+    let progress =
+    tasks.length === 0
+    ? 0
+    : (completed/tasks.length)*100;
+
+    document.getElementById("progressBar")
+    .style.width = progress + "%";
+}
+
+document
+.getElementById("searchInput")
+.addEventListener("input", renderTasks);
 
 renderTasks();
