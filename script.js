@@ -1,140 +1,119 @@
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-let currentFilter = "all";
-
 function saveTasks(){
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function addTask(){
 
-    const taskInput = document.getElementById("taskInput");
-    const priority = document.getElementById("priority");
-    const dueDate = document.getElementById("dueDate");
+const taskInput = document.getElementById("taskInput");
+const priority = document.getElementById("priority");
+const dueDate = document.getElementById("dueDate");
 
-    if(taskInput.value.trim() === ""){
-        alert("Enter a task");
-        return;
-    }
+if(taskInput.value.trim()===""){
+alert("Enter a task");
+return;
+}
 
-    tasks.push({
-        text: taskInput.value,
-        completed:false,
-        priority:priority.value,
-        dueDate:dueDate.value
-    });
+tasks.push({
+text: taskInput.value,
+priority: priority.value,
+dueDate: dueDate.value,
+completed:false
+});
 
-    taskInput.value="";
-    dueDate.value="";
+taskInput.value="";
+dueDate.value="";
 
-    saveTasks();
-    renderTasks();
+saveTasks();
+renderTasks();
 }
 
 function renderTasks(){
 
-    const taskList = document.getElementById("taskList");
+const taskList=document.getElementById("taskList");
+const search=document.getElementById("searchInput").value.toLowerCase();
 
-    const search =
-    document.getElementById("searchInput")
-    .value
-    .toLowerCase();
+taskList.innerHTML="";
 
-    taskList.innerHTML="";
+tasks
+.filter(task=>task.text.toLowerCase().includes(search))
+.forEach((task,index)=>{
 
-    let filteredTasks = tasks.filter(task => {
+const div=document.createElement("div");
 
-        let matchesSearch =
-        task.text.toLowerCase().includes(search);
+div.className=`task ${task.completed ? "completed" : ""}`;
 
-        let matchesFilter =
-        currentFilter==="all" ||
-        (currentFilter==="completed" && task.completed) ||
-        (currentFilter==="pending" && !task.completed);
+div.innerHTML=`
+<div class="task-info">
+<h3>${task.text}</h3>
+<small>
+Priority: ${task.priority} |
+Due: ${task.dueDate || "Not Set"}
+</small>
+</div>
 
-        return matchesSearch && matchesFilter;
-    });
+<div class="actions">
+<button onclick="toggleTask(${index})">✓</button>
+<button onclick="editTask(${index})">✏</button>
+<button onclick="deleteTask(${index})">🗑</button>
+</div>
+`;
 
-    filteredTasks.forEach((task,index)=>{
+taskList.appendChild(div);
 
-        const li = document.createElement("li");
+});
 
-        li.innerHTML = `
-        <div class="task-info">
-            <div class="${task.completed ? 'completed' : ''}">
-                ${task.text}
-            </div>
-
-            <small>
-                Priority:
-                <span class="priority-${task.priority.toLowerCase()}">
-                    ${task.priority}
-                </span>
-                |
-                Due: ${task.dueDate || 'Not Set'}
-            </small>
-        </div>
-
-        <div class="actions">
-            <button onclick="toggleTask(${tasks.indexOf(task)})">✔</button>
-            <button onclick="editTask(${tasks.indexOf(task)})">✏</button>
-            <button onclick="deleteTask(${tasks.indexOf(task)})">🗑</button>
-        </div>
-        `;
-
-        taskList.appendChild(li);
-    });
-
-    updateStats();
+updateStats();
 }
 
 function toggleTask(index){
-    tasks[index].completed = !tasks[index].completed;
-    saveTasks();
-    renderTasks();
+tasks[index].completed=!tasks[index].completed;
+saveTasks();
+renderTasks();
 }
 
 function editTask(index){
 
-    let newTask =
-    prompt("Edit Task", tasks[index].text);
+const updated=prompt(
+"Edit Task",
+tasks[index].text
+);
 
-    if(newTask && newTask.trim() !== ""){
-        tasks[index].text = newTask;
-        saveTasks();
-        renderTasks();
-    }
+if(updated){
+tasks[index].text=updated;
+saveTasks();
+renderTasks();
+}
 }
 
 function deleteTask(index){
 
-    if(confirm("Delete task?")){
-        tasks.splice(index,1);
-        saveTasks();
-        renderTasks();
-    }
+if(confirm("Delete task?")){
+tasks.splice(index,1);
+saveTasks();
+renderTasks();
 }
-
-function filterTasks(type){
-    currentFilter = type;
-    renderTasks();
 }
 
 function updateStats(){
 
-    document.getElementById("taskCount")
-    .innerText = `${tasks.length} Tasks`;
+const total=tasks.length;
 
-    let completed =
-    tasks.filter(task => task.completed).length;
+const completed=
+tasks.filter(t=>t.completed).length;
 
-    let progress =
-    tasks.length === 0
-    ? 0
-    : (completed/tasks.length)*100;
+const pending=total-completed;
 
-    document.getElementById("progressBar")
-    .style.width = progress + "%";
+document.getElementById("totalTasks").textContent=total;
+document.getElementById("completedTasks").textContent=completed;
+document.getElementById("pendingTasks").textContent=pending;
+
+const progress=
+total===0 ? 0 : (completed/total)*100;
+
+document.getElementById("progressBar")
+.style.width=progress+"%";
 }
 
 document
