@@ -32,7 +32,6 @@ function addTask() {
 function renderTasks() {
 
     const taskList = document.getElementById("taskList");
-
     const searchBox = document.getElementById("searchInput");
 
     const search = searchBox
@@ -41,48 +40,76 @@ function renderTasks() {
 
     taskList.innerHTML = "";
 
-    tasks
-        .filter(task =>
-            task.text.toLowerCase().includes(search)
-        )
-        .forEach((task, index) => {
+    const filteredTasks = tasks.filter(task =>
+        task.text.toLowerCase().includes(search)
+    );
 
-            const div = document.createElement("div");
+    if (filteredTasks.length === 0) {
+        taskList.innerHTML = `
+            <div class="empty-state">
+                🚀 Ready to be productive?
+                <br><br>
+                Add your first task above.
+            </div>
+        `;
+        updateStats();
+        return;
+    }
 
-            div.innerHTML = `
-            <div class="task-card">
+    filteredTasks.forEach((task, index) => {
 
-                <div class="task-left">
-                    <h3>${task.completed ? "✅" : "📌"} ${task.text}</h3>
+        let priorityClass = "priority-low";
 
-                    <p class="meta">
-                        Priority:
-                        <span class="priority-${task.priority.toLowerCase()}">
-                            ${task.priority}
-                        </span>
-                        |
-                        Due: ${task.dueDate || "Not Set"}
-                    </p>
-                </div>
+        if (task.priority === "High") {
+            priorityClass = "priority-high";
+        } else if (task.priority === "Medium") {
+            priorityClass = "priority-medium";
+        }
 
-                <div class="actions">
-                    <button onclick="toggleTask(${index})">✓</button>
-                    <button onclick="editTask(${index})">✏</button>
-                    <button onclick="deleteTask(${index})">🗑</button>
-                </div>
+        const div = document.createElement("div");
+
+        div.innerHTML = `
+        <div class="task-card ${task.completed ? 'completed-task' : ''}">
+
+            <div class="task-left">
+
+                <h3>${task.completed ? "✅" : "📌"} ${task.text}</h3>
+
+                <p class="meta">
+
+                    <span class="${priorityClass}">
+                        ${task.priority}
+                    </span>
+
+                    &nbsp; | &nbsp;
+
+                    📅 ${task.dueDate || "No Due Date"}
+
+                </p>
 
             </div>
-            `;
 
-            taskList.appendChild(div);
-        });
+            <div class="actions">
+
+                <button onclick="toggleTask(${index})">✓</button>
+
+                <button onclick="editTask(${index})">✏</button>
+
+                <button onclick="deleteTask(${index})">🗑</button>
+
+            </div>
+
+        </div>
+        `;
+
+        taskList.appendChild(div);
+    });
 
     updateStats();
 }
 
 function toggleTask(index) {
     tasks[index].completed = !tasks[index].completed;
-
     saveTasks();
     renderTasks();
 }
@@ -95,9 +122,7 @@ function editTask(index) {
     );
 
     if (updated && updated.trim() !== "") {
-
         tasks[index].text = updated;
-
         saveTasks();
         renderTasks();
     }
@@ -106,9 +131,7 @@ function editTask(index) {
 function deleteTask(index) {
 
     if (confirm("Delete task?")) {
-
         tasks.splice(index, 1);
-
         saveTasks();
         renderTasks();
     }
@@ -135,8 +158,6 @@ function updateStats() {
     document.getElementById("progressBar")
         .style.width = progress + "%";
 }
-
-/* FIXED SEARCH LISTENER */
 
 const searchInput = document.getElementById("searchInput");
 
